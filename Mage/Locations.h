@@ -16,6 +16,9 @@
 + (id) locationsForAllUsers;
 + (id) locationsForUser:(User *) user;
 
++ (BOOL) getHideInactiveFilter;
++ (void) setHideInactivedFilter:(BOOL) filter;
+
 
 - (id) initWithFetchedResultsController:(NSFetchedResultsController *) fetchedResultsController;
 

@@ -9,11 +9,13 @@
 #import "FilterTableViewController.h"
 #import "TimeFilter.h"
 #import "Observations.h"
+#import "Locations.h"
 
 @interface FilterTableViewController ()
 @property (assign, nonatomic) TimeFilterType timeFilter;
 @property (assign, nonatomic) BOOL importantFilter;
 @property (assign, nonatomic) BOOL favoritesFilter;
+@property (assign, nonatomic) BOOL hideInactivePeopleFilter;
 @property (assign, nonatomic) BOOL isPopover;
 @end
 
@@ -29,6 +31,7 @@
     self.timeFilter = [TimeFilter getTimeFilter];
     self.importantFilter = [Observations getImportantFilter];
     self.favoritesFilter = [Observations getFavoritesFilter];
+    self.hideInactivePeopleFilter = [Locations getHideInactiveFilter];
     
     self.isPopover = self.parentViewController.popoverPresentationController != nil;
     if (self.isPopover) {
@@ -55,6 +58,9 @@
         // TODO change important/fav filter switches
     } else if ([indexPath section] == 1) {
         cell.accessoryType = self.timeFilter == [indexPath row] ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
+    } else if ([indexPath section] == 2 && [indexPath row] == 0) {
+        UISwitch *switchControl = (UISwitch *) [cell viewWithTag:100];
+        [switchControl setOn:self.hideInactivePeopleFilter];
     }
     
     return cell;
@@ -77,6 +83,7 @@
 
 - (IBAction)onApplyFilterTapped:(id)sender {
     [TimeFilter setTimeFilter:self.timeFilter];
+    [Locations setHideInactivedFilter:self.hideInactivePeopleFilter];
     [Observations setImportantFilter:self.importantFilter];
     [Observations setFavoritesFilter:self.favoritesFilter];
     
@@ -92,6 +99,14 @@
     
     if (self.isPopover) {
         [Observations setFavoritesFilter:self.favoritesFilter];
+    }
+}
+
+- (IBAction)onHideInactivePeopleChanged:(id)sender {
+    self.hideInactivePeopleFilter = [sender isOn];
+
+    if (self.isPopover) {
+        [Locations setHideInactivedFilter:self.hideInactivePeopleFilter];
     }
 }
 
